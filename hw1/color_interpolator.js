@@ -1,7 +1,7 @@
 /**
  *
  * @param size {number}
- * @param colors {[number, number, number, 1][]} for corners color
+ * @param colors {number[]} for corners color
  * @param x {number}
  * @param y {number}
  */
@@ -28,25 +28,28 @@ function colorInterpolator (size, colors, x, y) {
     y
   }
   // detect the point is in which triangle
-  const targetColor = [colors[0], colors[2]]
+  const targetColor = [
+    [colors[0], colors[1], colors[2], colors[3]],
+    [colors[8], colors[9], colors[10], colors[11]]
+  ]
   const triangle = [leftBottom, rightTop]
   if (distance(current, leftTop) > distance(current, rightBottom)) {
     // point is closer to rightBottom
     triangle.push(rightBottom)
-    targetColor.push(colors[1])
+    targetColor.push([colors[4], colors[5], colors[6], colors[7]])
   } else {
     // point is closer to rightTop
     triangle.push(leftTop)
-    targetColor.push(colors[3])
+    targetColor.push([colors[12], colors[13], colors[14], colors[15]])
   }
   console.assert(targetColor.length === 3)
   console.assert(triangle.length === 3)
   // then, calculate the result color
   // reference: https://codeplea.com/triangular-interpolation
   let r, g, b
-  const w0 = distance(current, triangle[0])
-  const w1 = distance(current, triangle[1])
-  const w2 = distance(current, triangle[2])
+  const w0 = 1 / distance(current, triangle[0])
+  const w1 = 1 / distance(current, triangle[1])
+  const w2 = 1 / distance(current, triangle[2])
   const base = w0 + w1 + w2
   r = w0 * targetColor[0][0] + w1 * targetColor[1][0] + w2 * targetColor[2][0]
   r = r / base
