@@ -42,68 +42,71 @@ var colors = new Float32Array(
     0.0, 0.0, 1.0, 1.0,    // blue
     1.0, 1.0, 1.0, 1.0    // white
   ]
-)
+);
+
 
 // A few global variables...
 
 // the OpenGL context
-var gl
+var gl;
 
 // handles to buffers on the GPU
-var vertexbuffer
-var colorbuffer
+var vertexbuffer;
+var colorbuffer;
 
 // handle to the compiled shader program on the GPU
-var shader
+var shader;
+
 
 // code to actually render our geometry
-function draw () {
+function draw()
+{
   // clear the framebuffer
-  gl.clear(gl.COLOR_BUFFER_BIT)
+  gl.clear(gl.COLOR_BUFFER_BIT);
 
   // bind the shader
-  gl.useProgram(shader)
+  gl.useProgram(shader);
 
   // bind the buffer
-  gl.bindBuffer(gl.ARRAY_BUFFER, vertexbuffer)
+  gl.bindBuffer(gl.ARRAY_BUFFER, vertexbuffer);
 
   // get the index for the a_Position attribute defined in the vertex shader
-  var positionIndex = gl.getAttribLocation(shader, 'a_Position')
+  var positionIndex = gl.getAttribLocation(shader, 'a_Position');
   if (positionIndex < 0) {
-    console.log('Failed to get the storage location of a_Position')
-    return
+    console.log('Failed to get the storage location of a_Position');
+    return;
   }
 
   // "enable" the a_position attribute
-  gl.enableVertexAttribArray(positionIndex)
+  gl.enableVertexAttribArray(positionIndex);
 
   // associate the data in the currently bound buffer with the a_position attribute
   // (The '2' specifies there are 2 floats per vertex in the buffer.  Don't worry about
   // the last three args just yet.)
-  gl.vertexAttribPointer(positionIndex, 2, gl.FLOAT, false, 0, 0)
+  gl.vertexAttribPointer(positionIndex, 2, gl.FLOAT, false, 0, 0);
 
   // we can unbind the buffer now (not really necessary when there is only one buffer)
-  gl.bindBuffer(gl.ARRAY_BUFFER, null)
+  gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
   // bind the buffer with the color data
-  gl.bindBuffer(gl.ARRAY_BUFFER, colorbuffer)
+  gl.bindBuffer(gl.ARRAY_BUFFER, colorbuffer);
 
   // get the index for the a_Color attribute defined in the vertex shader
-  var colorIndex = gl.getAttribLocation(shader, 'a_Color')
+  var colorIndex = gl.getAttribLocation(shader, 'a_Color');
   if (colorIndex < 0) {
-    console.log('Failed to get the storage location of a_Color')
-    return
+    console.log('Failed to get the storage location of a_Color');
+    return;
   }
 
   // "enable" the a_Color attribute
-  gl.enableVertexAttribArray(colorIndex)
+  gl.enableVertexAttribArray(colorIndex);
 
   // Associate the data in the currently bound buffer with the a_Color attribute
   // The '4' specifies there are 4 floats per vertex in the buffer
-  gl.vertexAttribPointer(colorIndex, 4, gl.FLOAT, false, 0, 0)
+  gl.vertexAttribPointer(colorIndex, 4, gl.FLOAT, false, 0, 0);
 
   // we can unbind the buffer now
-  gl.bindBuffer(gl.ARRAY_BUFFER, null)
+  gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
   // draw, specifying the type of primitive to assemble from the vertices
   gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
@@ -111,9 +114,9 @@ function draw () {
 
   // unbind shader and "disable" the attribute indices
   // (not really necessary when there is only one shader)
-  gl.disableVertexAttribArray(positionIndex)
-  gl.disableVertexAttribArray(colorIndex)
-  gl.useProgram(null)
+  gl.disableVertexAttribArray(positionIndex);
+  gl.disableVertexAttribArray(colorIndex);
+  gl.useProgram(null);
 
 }
 
@@ -129,19 +132,20 @@ function main () {
   // redrawn
 
   // get graphics context
-  gl = getGraphicsContext('theCanvas')
+  gl = getGraphicsContext("theCanvas");
 
   // load and compile the shader pair
   shader = createProgram(gl, vshaderSource, fshaderSource)
 
   // load the vertex data into GPU memory
-  vertexbuffer = createAndLoadBuffer(vertices)
+  vertexbuffer = createAndLoadBuffer(vertices);
 
   //load the color data into GPU memory
-  colorbuffer = createAndLoadBuffer(colors)
+  colorbuffer = createAndLoadBuffer(colors);
+
 
   // specify a fill color for clearing the framebuffer
-  gl.clearColor(1.0, 1.0, 1.0, 1.0)
+  gl.clearColor(1.0, 1.0, 1.0, 1.0);
 
   // we could just call draw() once to see the result, but setting up an animation
   // loop to continually update the canvas makes it easier to experiment with the
@@ -164,14 +168,16 @@ function main () {
   )
 
   // define an animation loop
-  var animate = function () {
-    draw()
+  var animate = function() {
+    draw();
 
     // request that the browser calls animate() again "as soon as it can"
-    requestAnimationFrame(animate)
-  }
+    requestAnimationFrame(animate);
+  };
 
   // start drawing!
-  animate()
+  animate();
+
 
 }
+
