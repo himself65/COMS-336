@@ -19,7 +19,6 @@ uniform float yShift;
 uniform mat4 scaleMatrix;
 void main()
 {
-  // constructs a vec4 from a float and a vec3
   vec4 temp = a_Position * scaleMatrix;
   gl_Position = vec4(temp.x + xShift, temp.y + yShift, temp.zw);
 }
