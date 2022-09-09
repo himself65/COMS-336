@@ -30,7 +30,7 @@ var vertexbuffer;
 var shader;
 
 // code to actually render our geometry
-function draw(xShiftValue, yShiftValue)
+function draw(xShiftValue, yShiftValue, scale)
 {
   // clear the framebuffer
   gl.clear(gl.COLOR_BUFFER_BIT);
@@ -59,10 +59,19 @@ function draw(xShiftValue, yShiftValue)
   // we can unbind the buffer now (not really necessary when there is only one buffer)
   gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
-  let xIndex = gl.getUniformLocation(shader, "xShift");
-  let yIndex = gl.getUniformLocation(shader, "yShift");
+  const scaleMatrix = new Float32Array([
+    scale, 0, 0, 0,
+    0, scale, 0, 0,
+    0, 0, scale, 0,
+    0, 0, 0, 1
+  ]);
+
+  const xIndex = gl.getUniformLocation(shader, "xShift");
+  const yIndex = gl.getUniformLocation(shader, "yShift");
+  const scaleIndex = gl.getUniformLocation(shader, 'scaleMatrix');
   gl.uniform1f(xIndex, xShiftValue);
   gl.uniform1f(yIndex, yShiftValue);
+  gl.uniformMatrix4fv(scaleIndex, false, scaleMatrix);
 
   // draw, specifying the type of primitive to assemble from the vertices
   gl.drawArrays(gl.TRIANGLES, 0, numPoints);
@@ -99,14 +108,15 @@ function main() {
   //draw();
 
   let theta = 0;
-  let r = 0.75;
-  let increment = toRadians(1);
+  const r = 0.75;
+  const increment = toRadians(1);
 
   // define an animation loop
   var animate = function() {
     const x = r * Math.cos(theta)
     const y = r * Math.sin(theta)
-  	draw(x, y);
+    const scale = parseFloat(document.getElementById('scaleBox').value)
+  	draw(x, y, scale);
     if (toDegrees(theta) > 360) theta = 0
     else theta += increment
 

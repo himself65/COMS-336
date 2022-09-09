@@ -8,15 +8,20 @@
 <canvas id="theCanvas" width="400" height="400">
   Please use a browser that supports "canvas"
 </canvas>
+<br/>
+<span>Scale: </span>
+<input id="scaleBox" type="number" value="1.0"/>
 <script id="vertexShader" type="x-shader/x-vertex">
 precision mediump float;
 attribute vec4 a_Position;
 uniform float xShift;
 uniform float yShift;
+uniform mat4 scaleMatrix;
 void main()
 {
   // constructs a vec4 from a float and a vec3
-  gl_Position = vec4(a_Position.x + xShift, a_Position.y + yShift, a_Position.zw);
+  vec4 temp = a_Position * scaleMatrix;
+  gl_Position = vec4(temp.x + xShift, temp.y + yShift, temp.zw);
 }
 </script>
 <script id="fragmentShader" type="x-shader/x-fragment">
