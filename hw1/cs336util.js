@@ -47,8 +47,13 @@ function loadAndCompileShader(gl, type, source) {
 function createProgram(gl, vshaderId, fshaderId) {
 
   // extract shader source code from the html
-  var vshaderSource = document.getElementById(vshaderId).textContent;
-  var fshaderSource = document.getElementById(fshaderId).textContent;
+  try {
+    var vshaderSource = document.getElementById(vshaderId).textContent;
+    var fshaderSource = document.getElementById(fshaderId).textContent;
+  } catch (e) {
+    vshaderSource = vshaderId
+    fshaderSource = fshaderId
+  }
 
   // Load and compile shader code
   var vertexShader = loadAndCompileShader(gl, gl.VERTEX_SHADER, vshaderSource);
