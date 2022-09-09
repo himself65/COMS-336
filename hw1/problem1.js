@@ -30,7 +30,7 @@ var vertexbuffer;
 var shader;
 
 // code to actually render our geometry
-function draw(shiftValue)
+function draw(xShiftValue, yShiftValue)
 {
   // clear the framebuffer
   gl.clear(gl.COLOR_BUFFER_BIT);
@@ -59,8 +59,10 @@ function draw(shiftValue)
   // we can unbind the buffer now (not really necessary when there is only one buffer)
   gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
-  let index = gl.getUniformLocation(shader, "shift");
-  gl.uniform1f(index, shiftValue);
+  let xIndex = gl.getUniformLocation(shader, "xShift");
+  let yIndex = gl.getUniformLocation(shader, "yShift");
+  gl.uniform1f(xIndex, xShiftValue);
+  gl.uniform1f(yIndex, yShiftValue);
 
   // draw, specifying the type of primitive to assemble from the vertices
   gl.drawArrays(gl.TRIANGLES, 0, numPoints);
@@ -96,14 +98,17 @@ function main() {
   // shaders
   //draw();
 
-  let shift = -0.2;
-  let increment = 0.03;
+  let theta = 0;
+  let r = 0.75;
+  let increment = toRadians(1);
 
   // define an animation loop
   var animate = function() {
-  	draw(shift);
-    if (shift < -0.2 || shift > 0.2) increment = -increment;
-    shift += increment;
+    const x = r * Math.cos(theta)
+    const y = r * Math.sin(theta)
+  	draw(x, y);
+    if (toDegrees(theta) > 360) theta = 0
+    else theta += increment
 
   	// request that the browser calls animate() again "as soon as it can"
       requestAnimationFrame(animate);

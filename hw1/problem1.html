@@ -11,11 +11,12 @@
 <script id="vertexShader" type="x-shader/x-vertex">
 precision mediump float;
 attribute vec4 a_Position;
-uniform float shift;
+uniform float xShift;
+uniform float yShift;
 void main()
 {
   // constructs a vec4 from a float and a vec3
-  gl_Position = vec4(a_Position.x + shift, a_Position.yzw);
+  gl_Position = vec4(a_Position.x + xShift, a_Position.y + yShift, a_Position.zw);
 }
 </script>
 <script id="fragmentShader" type="x-shader/x-fragment">
