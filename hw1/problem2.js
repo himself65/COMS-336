@@ -70,18 +70,18 @@ function draw(n)
 
 }
 
-function createVertices(n) {
+function createVertices(n, scale) {
   const vertices = []
   const per = (2 * Math.PI) / n
   for (let i = 0; i < n; ++i) {
     vertices.push(0, 0)
     const theta = i * per;
-    const x = Math.cos(theta)
-    const y = Math.sin(theta)
+    const x = Math.cos(theta) * scale
+    const y = Math.sin(theta) * scale
     vertices.push(x, y)
     const nextTheta = (i + 1) * per;
-    const nextX = Math.cos(nextTheta)
-    const nextY = Math.sin(nextTheta)
+    const nextX = Math.cos(nextTheta) * scale
+    const nextY = Math.sin(nextTheta) * scale
     vertices.push(nextX, nextY)
   }
   return new Float32Array(vertices)
@@ -101,7 +101,9 @@ function main() {
   shader = createProgram(gl, vshaderSource, fshaderSource);
 
   let currentN = parseInt(document.getElementById('nBox').value);
-  const vertices = createVertices(currentN)
+  let currentScale = parseFloat(document.getElementById('scaleBox').value);
+
+  const vertices = createVertices(currentN, currentScale)
 
   // load the vertex data into GPU memory
   vertexbuffer = createAndLoadBuffer(vertices);
@@ -116,10 +118,18 @@ function main() {
 
   // define an animation loop
   var animate = function() {
-    const nextN = parseInt(document.getElementById('nBox').value);
-    if (nextN > 0 && nextN !== currentN) {
+    let nextN = parseInt(document.getElementById('nBox').value);
+    const nextScale = parseFloat(document.getElementById('scaleBox').value);
+    if (
+      nextScale > 0 && nextScale !== currentScale ||
+      nextN > 0 && nextN !== currentN
+    ) {
+      if (nextN > 100) {
+        // too much will crash my computer
+        nextN = 100
+      }
       // re-bind the array
-      const vertices = createVertices(nextN)
+      const vertices = createVertices(nextN, nextScale)
 
       // load the vertex data into GPU memory
       vertexbuffer = createAndLoadBuffer(vertices);
