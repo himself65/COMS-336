@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Propeller</title>
+</head>
+<body>
+<canvas id="theCanvas" width="400" height="400">
+  Please use a browser that supports "canvas"
+</canvas>
+<script id="vertexShader" type="x-shader/x-vertex">
+uniform mat4 transform;
+attribute vec4 a_Position;
+void main()
+{
+  gl_Position = transform * a_Position;
+}
+</script>
+<script id="fragmentShader" type="x-shader/x-fragment">
+precision mediump float;
+uniform vec4 color;
+void main()
+{
+  gl_FragColor = color;
+}
+</script>
+<script src="./three.js"></script>
+<script src="./cs336util.js"></script>
+<script src="./Propeller.js"></script>
+<script>window.onload = main</script>
+</body>
+</html>
