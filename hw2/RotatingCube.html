@@ -1,0 +1,30 @@
+<!--  Demo of using a transformation matrix in a vertex shader. -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Transformations</title>
+</head>
+
+<body>
+<canvas id="theCanvas" width="600" height="400"  tabindex="0">
+  Please use a browser that supports "canvas"
+</canvas>
+
+<p>
+  Keyboard controls:
+  <ul>
+    <li>SPACE - pause rotation</li>
+    <li>y - rotate about y axis</li>
+    <li>x - rotate about x axis</li>
+    <li>z - rotate about z axis</li>
+    <li>o - Reset to initial state</li>
+  </ul>
+
+  <script src="three.js"></script>
+  <script src="cs336util.js"></script>
+  <script src="RotatingCube.js"></script>
+  <script>window.onload = main</script>
+</body>
+</html>
