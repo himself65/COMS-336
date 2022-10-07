@@ -96,6 +96,8 @@ var shader;
 
 // Transformation matrices.
 var model = new THREE.Matrix4();
+model.premultiply(new THREE.Matrix4().makeRotationY(toRadians(-45)))
+model.premultiply(new THREE.Matrix4().makeRotationZ(toRadians(-45)))
 
 // Set up a "view point" by translating 5 units out the z axis, rotating 45 degrees
 // cw about the x axis, and then rotating 30 ccw about the y axis.  This creates a
@@ -175,12 +177,24 @@ function handleKeyPress(event)
       text = "T";
       break;
 
-// Experiment #2:
-// This should (approximately) un-do RotateY(-45)*RotateX(-45) using
-// ZYZ order for Euler angles.  Press p, then q, then r in "intrinsic" mode
-// after doing RotateY(-45)*RotateX(-45)
+// My solution XZX
 //     case 'p':
-//       m.makeRotationZ(toRadians(-35));
+//     m.makeRotationX(toRadians(-35));
+//     text = "P";
+//     break;
+//     case 'q':
+//     m.makeRotationZ(toRadians(60));
+//     text = "Q";
+//     break;
+//     case 'r':
+//     m.makeRotationX(toRadians(55));
+//     text = "R";
+//     break;
+
+
+// My solution XYX
+//     case 'p':
+//       m.makeRotationX(toRadians(55));
 //       text = "P";
 //       break;
 //     case 'q':
@@ -188,93 +202,37 @@ function handleKeyPress(event)
 //       text = "Q";
 //       break;
 //     case 'r':
-//       m.makeRotationZ(toRadians(55));
+//       m.makeRotationX(toRadians(-35));
 //       text = "R";
 //       break;
 
-// YZY
-    // case 'p':
-    // m.makeRotationY(toRadians(90));
-    // text = "P";
-    // break;
-    // case 'q':
-    // m.makeRotationZ(toRadians(45));
-    // text = "Q";
-    // break;
-    // case 'r':
-    // m.makeRotationY(toRadians(-45));
-    // text = "R";
-    // break;
-
-// XZX
-    // case 'p':
-    // m.makeRotationX(toRadians(-45));
-    // text = "P";
-    // break;
-    // case 'q':
-    // m.makeRotationZ(toRadians(45));
-    // text = "Q";
-    // break;
-    // case 'r':
-    // m.makeRotationX(toRadians(90));
-    // text = "R";
-    // break;
-// My XZX
-    case 'p':
-    m.makeRotationX(toRadians(-45));
-    text = "P";
-    break;
-    case 'q':
-    m.makeRotationZ(toRadians(45));
-    text = "Q";
-    break;
-    case 'r':
-    m.makeRotationX(toRadians(90));
-    text = "R";
-    break;
-
-// ZXZ
-    // case 'p':
-    // m.makeRotationZ(toRadians(55));
-    // text = "P";
-    // break;
-    // case 'q':
-    // m.makeRotationX(toRadians(60));
-    // text = "Q";
-    // break;
-    // case 'r':
-    // m.makeRotationZ(toRadians(-35));
-    // text = "R";
-    // break;
-
-//ZYX
-    // case 'p':
-    // m.makeRotationZ(toRadians(35));
-    // text = "P";
-    // break;
-    // case 'q':
-    // m.makeRotationY(toRadians(30));
-    // text = "Q";
-    // break;
-    // case 'r':
-    // m.makeRotationX(toRadians(55));
-    // text = "R";
-    // break;
-
-//YXZ
-    // case 'p':
-    // m.makeRotationY(toRadians(55));
-    // text = "P";
-    // break;
-    // case 'q':
-    // m.makeRotationX(toRadians(30));
-    // text = "Q";
-    // break;
-    // case 'r':
-    // m.makeRotationZ(toRadians(35));
-    // text = "R";
-    // break;
-
+// My solution ZXY
+//     case 'p':
+//       m.makeRotationZ(toRadians(35));
+//       text = "P";
+//       break;
+//     case 'q':
+//       m.makeRotationX(toRadians(30));
+//       text = "Q";
+//       break;
+//     case 'r':
+//       m.makeRotationY(toRadians(35));
+//       text = "R";
+//       break;
+//
+// My solution XZY
+//     case 'p':
+//       m.makeRotationX(toRadians(35));
+//       text = "P";
+//       break;
+//     case 'q':
+//       m.makeRotationZ(toRadians(30));
+//       text = "Q";
+//       break;
+//     case 'r':
+//       m.makeRotationY(toRadians(55));
+//       text = "R";
+//       break;
 
     case('d'):
       cameraHead += 15;
