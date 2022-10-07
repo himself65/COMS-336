@@ -93,7 +93,10 @@ CS336Object.prototype.getMatrix = function()
  */
 CS336Object.prototype.moveForward = function(distance)
 {
-  // TODO
+  this.position.x += -distance * this.rotation.elements[8];
+  this.position.y += -distance * this.rotation.elements[9];
+  this.position.z += -distance * this.rotation.elements[10];
+  this.matrixNeedsUpdate = true;
 };
 
 /**
@@ -109,7 +112,10 @@ CS336Object.prototype.moveBack = function(distance)
  */
 CS336Object.prototype.moveRight = function(distance)
 {
-  // TODO
+  this.position.x += -distance * this.rotation.elements[0];
+  this.position.y += -distance * this.rotation.elements[1];
+  this.position.z += -distance * this.rotation.elements[2];
+  this.matrixNeedsUpdate = true;
 };
 
 /**
@@ -125,7 +131,10 @@ CS336Object.prototype.moveLeft = function(distance)
  */
 CS336Object.prototype.moveUp = function(distance)
 {
-  // TODO
+  this.position.x += -distance * this.rotation.elements[4];
+  this.position.y += -distance * this.rotation.elements[5];
+  this.position.z += -distance * this.rotation.elements[6];
+  this.matrixNeedsUpdate = true;
 };
 
 /**
@@ -141,7 +150,13 @@ CS336Object.prototype.moveDown = function(distance)
  */
 CS336Object.prototype.rotateX = function(degrees)
 {
-  // TODO
+  const radians = toRadians(degrees)
+  this.rotation = new THREE.Matrix4().makeRotationAxis({
+    x: 1,
+    y: 0,
+    z: 0,
+  }, radians).multiply(this.rotation)
+  this.matrixNeedsUpdate = true
 };
 
 /**
@@ -149,7 +164,13 @@ CS336Object.prototype.rotateX = function(degrees)
  */
 CS336Object.prototype.rotateY = function(degrees)
 {
-  // TODO
+  const radians = toRadians(degrees)
+  this.rotation = new THREE.Matrix4().makeRotationAxis({
+    x: 0,
+    y: 1,
+    z: 0,
+  }, radians).multiply(this.rotation)
+  this.matrixNeedsUpdate = true
 };
 
 /**
@@ -157,7 +178,13 @@ CS336Object.prototype.rotateY = function(degrees)
  */
 CS336Object.prototype.rotateZ = function(degrees)
 {
-  // TODO
+  const radians = toRadians(degrees)
+  this.rotation = new THREE.Matrix4().makeRotationAxis({
+    x: 0,
+    y: 0,
+    z: 1,
+  }, radians).multiply(this.rotation)
+  this.matrixNeedsUpdate = true
 };
 
 /**
@@ -165,7 +192,9 @@ CS336Object.prototype.rotateZ = function(degrees)
  */
 CS336Object.prototype.rotateOnAxis = function(degrees, x, y, z)
 {
-  // TODO
+  const radians = toRadians(degrees)
+  this.rotation.premultiply(new THREE.Matrix4().makeRotationAxis({ x, y, z }, radians))
+  this.matrixNeedsUpdate = true
 };
 
 /**
@@ -174,7 +203,34 @@ CS336Object.prototype.rotateOnAxis = function(degrees, x, y, z)
  */
 CS336Object.prototype.rotateOnAxisEuler = function(degrees, pitch, head)
 {
-  // TODO
+  let m = new THREE.Matrix4()
+    .makeRotationAxis({
+      x: 0,
+      y: 1,
+      z: 0
+    }, toRadians(head))
+    .makeRotationAxis({
+      x: 1,
+      y: 0,
+      z: 0
+    }, toRadians(pitch))
+    .makeRotationAxis({
+      x: 0,
+      y: 1,
+      z: 0
+    }, toRadians(degrees))
+    .makeRotationAxis({
+      x: 1,
+      y: 0,
+      z: 0
+    }, toRadians(-pitch))
+    .makeRotationAxis({
+      x: 0,
+      y: 1,
+      z: 0
+    }, toRadians(-head))
+  this.setRotation(m.multiply(this.rotation))
+  this.matrixNeedsUpdate = true
 };
 
 /**
@@ -183,7 +239,9 @@ CS336Object.prototype.rotateOnAxisEuler = function(degrees, pitch, head)
  */
 CS336Object.prototype.turnLeft = function(degrees)
 {
-  // TODO
+  const radians = toRadians(degrees)
+  this.rotation.premultiply(new THREE.Matrix4().makeRotationY(radians))
+  this.matrixNeedsUpdate = true
 };
 
 /**
@@ -222,7 +280,10 @@ CS336Object.prototype.lookDown = function(degrees)
  */
 CS336Object.prototype.orbitUp = function(degrees, distance)
 {
-  // TODO
+  this.moveForward(distance);
+  this.rotateX(degrees);
+  this.moveBack(distance);
+  this.matrixNeedsUpdate = true
 };
 
 /**
@@ -244,7 +305,10 @@ CS336Object.prototype.orbitDown = function(degrees, distance)
  */
 CS336Object.prototype.orbitRight = function(degrees, distance)
 {
-  // TODO
+  this.moveForward(distance)
+  this.turnLeft(degrees)
+  this.moveBack(distance)
+  this.matrixNeedsUpdate = true
 };
 
 /**
@@ -267,5 +331,10 @@ CS336Object.prototype.orbitLeft = function(degrees, distance)
  */
 CS336Object.prototype.lookAt = function(x, y, z)
 {
-  // TODO
+  this.rotation = new THREE.Matrix4().lookAt(
+    new THREE.Vector3(0.0, 0.0, 0.0), // from
+    new THREE.Vector3(x, y, z), // to
+    new THREE.Vector3(0, 1, 0)
+  )
+  this.matrixNeedsUpdate = true
 };
