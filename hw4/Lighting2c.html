@@ -1,0 +1,145 @@
+<!--  Demo of Phong (ADS) reflection model using Phong shading
+(color is calculated per-fragment). Same as Lighting2a.html
+but adds the specular term in the fragment
+shader. Also uses Lighting2.js code.
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Phong lighting</title>
+</head>
+
+<body>
+	<canvas id="theCanvas" width="600" height="400">
+    Please use a browser that supports "canvas"
+    </canvas>
+
+<p>
+Keyboard controls:
+<ul style="list-style:none;">
+<li>SPACE - pause rotation
+<li>x - rotate about x axis
+<li>y - rotate about y axis
+<li>z - rotate about z axis
+<li>o - Reset to initial state
+<li>
+</ul>
+
+<script id="vertexLightingShader" type="x-shader/x-vertex">
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
+uniform mat3 normalMatrix;
+uniform vec4 lightPosition;
+
+attribute vec4 a_Position;
+attribute vec3 a_Normal;
+
+varying vec3 fL;
+varying vec3 fN;
+varying vec3 fV;
+void main()
+{
+  // convert position to eye coords
+  vec4 positionEye = view * model * a_Position;
+
+  // convert light position to eye coords
+  vec4 lightEye = view * lightPosition;
+
+  // vector to light
+  fL = (lightEye - positionEye).xyz;
+
+  // transform normal vector into eye coords
+  fN = normalMatrix * a_Normal;
+
+  // vector from vertex position toward view point
+  fV = normalize(-(positionEye).xyz);
+
+  gl_Position = projection * view * model * a_Position;
+}</script>
+
+<script id="fragmentLightingShader" type="x-shader/x-fragment">
+precision mediump float;
+
+varying vec3 fL;
+varying vec3 fN;
+varying vec3 fV;
+void main()
+{
+  // normalize after interpolating
+  vec3 N = normalize(fN);
+  vec3 L = normalize(fL);
+  vec3 V = normalize(fV);
+
+  // reflected vector
+  vec3 R = reflect(-L, N);
+
+  // remaining code cut and pasted from the Lighting2b.html vertex shader
+
+  // hard-coded surface color
+  vec4 diffuseColor = 0.6 * vec4(0.0, 0.8, 0.0, 1.0);
+
+  // ambient term based on surface color
+  vec4 ambient = 0.2 * diffuseColor;
+
+  // specular reflection based on light color (presumed white)
+  vec4 specularColor = 0.5 * vec4(1.0, 1.0, 1.0, 1.0);
+
+  // specular exponent controls the "shininess"
+  float exponent = 15.0	;
+
+  // Lambert's law, clamp negative values to zero
+  float diffuseFactor = max(0.0, dot(L, N));
+
+  // specular factor from Phong reflection model
+  float specularFactor = pow(max(0.0, dot(V, R)), exponent);
+
+  // add the components together
+  vec4 result = specularColor * specularFactor + diffuseColor * diffuseFactor + ambient;
+  gl_FragColor.a = 1.0;
+
+  float red_val = result.r;
+  float green_val = result.g;
+  float blue_val = result.b;
+
+  float greyscale = (red_val + green_val + blue_val) / 3.0;
+  if (greyscale <= 0.1) {
+    gl_FragColor = vec4(0.0, 0.0, 1.0, 1.0);
+  } else if(greyscale > 0.1 && greyscale <= 0.2){
+    gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
+  } else if (greyscale > 0.2 && greyscale <= 0.3){
+    gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+  } else {
+    gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);
+  }
+}
+</script>
+
+<script id="vertexColorShader" type="x-shader/x-vertex">
+uniform mat4 transform;
+attribute vec4 a_Position;
+attribute vec4 a_Color;
+varying vec4 color;
+void main()
+{
+  color = a_Color;
+  gl_Position = transform * a_Position;
+}
+</script>
+
+<script id="fragmentColorShader" type="x-shader/x-fragment">
+precision mediump float;
+varying vec4 color;
+void main()
+{
+  gl_FragColor = color;
+}
+</script>
+    <script src="three.js"></script>
+    <script src="cs336util.js"></script>
+    <script src="Lighting2.js"></script>
+		<script>window.onload = main</script>
+</body>
+</html>
