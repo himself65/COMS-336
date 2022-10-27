@@ -14,6 +14,7 @@ uniform mat4 view;
 uniform mat4 projection;
 uniform mat3 normalMatrix;
 uniform vec4 lightPosition;
+uniform vec4 D;
 
 attribute vec4 a_Position;
 attribute vec3 a_Normal;
@@ -21,6 +22,7 @@ attribute vec3 a_Normal;
 varying vec3 fL;
 varying vec3 fN;
 varying vec3 fV;
+varying vec3 fD;
 void main()
 {
   // convert position to eye coords
@@ -28,6 +30,7 @@ void main()
 
   // convert light position to eye coords
   vec4 lightEye = view * lightPosition;
+  fD = (view * D).xyz;
 
   // vector to light
   fL = (lightEye - positionEye).xyz;
@@ -50,7 +53,9 @@ precision mediump float;
 uniform mat3 materialProperties;
 uniform mat3 lightProperties;
 uniform float shininess;
+uniform float s;
 
+varying vec3 fD;
 varying vec3 fL;
 varying vec3 fN;
 varying vec3 fV;
@@ -60,6 +65,7 @@ void main()
   vec3 N = normalize(fN);
   vec3 L = normalize(fL);
   vec3 V = normalize(fV);
+  vec3 D = normalize(fD);
 
   // reflected vector
   vec3 R = reflect(-L, N);
@@ -77,8 +83,11 @@ void main()
   // specular factor from Phong reflection model
   float specularFactor = pow(max(0.0, dot(V, R)), shininess);
 
+  float spotLightFactor = pow(max(0.0, dot(-L, D)), s);
+
   // add the components together
-  gl_FragColor = specularColor * specularFactor + diffuseColor * diffuseFactor + ambientColor;
+  vec4 light = spotLightFactor * (specularColor * specularFactor + diffuseColor * diffuseFactor + ambientColor);
+  gl_FragColor = spotLightFactor * light;
   gl_FragColor.a = 1.0;
 }
 `;
@@ -193,6 +202,7 @@ var matPropElements = new Float32Array([
 1, 1, 1
 ]);
 var shininess = 20.0;
+var s = 15;
 
 // clay or terracotta
 //var matPropElements = new Float32Array([
@@ -282,6 +292,14 @@ function handleKeyPress(event)
   case 'T':
     shininess -= 1;
     console.log("exponent: " + shininess);
+    break;
+  case 'c':
+    s+=1;
+    console.log('s', s)
+    break;
+  case 'C':
+    s-=1;
+    console.log('s', s)
     break;
 
     // pause rotation
@@ -428,6 +446,16 @@ function draw()
   gl.uniformMatrix3fv(loc, false, matPropElements);
   loc = gl.getUniformLocation(lightingShader, "shininess");
   gl.uniform1f(loc, shininess);
+  loc = gl.getUniformLocation(lightingShader, "s");
+  gl.uniform1f(loc, s);
+  loc = gl.getUniformLocation(lightingShader, "D");
+  var lr = theObject.rotation;
+  gl.uniform4f(loc,
+    -lr.elements[8],
+    -lr.elements[9],
+    -lr.elements[10],
+    0 // this is a vector
+  );
 
   gl.drawArrays(gl.TRIANGLES, 0, theModel.numVertices);
 
